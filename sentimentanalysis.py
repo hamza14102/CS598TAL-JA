@@ -29,6 +29,10 @@ sia = SentimentIntensityAnalyzer()
 
 
 def journal_entry(file_name):
+    """Open a new journal entry as a text file.
+       Use SentimentIntensityAnalyzer to score.
+       Save scores and entry in a pickled dictionary.
+    """
 
     file = open(file_name, "r")
     todays_date = datetime.datetime.now()
@@ -81,11 +85,17 @@ def journal_entry(file_name):
 #journal_entry("test.txt")
 
 #def open_journal_entry(date):
+     """Open a journal entry by date
+        and print the content.
+     """
 def see_dated_scores():
+    """Open the pickled dictonary and print
+       all the content.
+    """
 
     if os.path.isfile("dated_scores.pkl"):
         dated_scores_file = open('dated_scores.pkl', 'rb')    
         dated_scores = pickle.load(dated_scores_file)
-        #print(dated_scores)
+        print(dated_scores)
 
 #see_dated_scores()

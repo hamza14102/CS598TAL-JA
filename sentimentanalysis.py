@@ -1,45 +1,23 @@
 ###############################################################
-#All the imports for sentiment analysis & text processing
+#All the imports
 
 import nltk
 import datetime
 import os
 import pickle
 
-#String operations for preprocessing text
-import string
-
-#Stopwords to remove
-from nltk.corpus import stopwords as stopwords
-stop_words = set(stopwords.words('english'))
-punctuations = '''!()-[]{};:'"\,<>./?@#$%^&*_~'''
-numbers = ["0","1","2","3","4","5","6","7","8","9"]
-
-#Word tokenizer
-#Use nltk.word_tokenize(line of words)
-from nltk.tokenize import word_tokenize
-
-#Word stemmer
-#from nltk.stem.snowball import EnglishStemmer
+from nltk import tokenize
 
 #NLTK Sentiment Analyzer tool
 from nltk.sentiment import sentiment_analyzer
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 #from nltk.sentiment.vader import SentiText
 
-#NLTK basic sentiment analysis utilities
-#demo_liu_hu_lexicon(sentence, plot=False) -> uses Liu Hu lexicon for pos/neg/neu word classification
-#demo_sent_subjectivity(text) -> classify sentence as subjective or objective
-from nltk.sentiment import util as sentiment_util
-
-#For counting occurences of things in general
-from collections import Counter
-
 #These may need to be downloaded?
 #nltk.download('punkt_tab')
 #nltk.download('stopwords')
-nltk.download('subjectivity')
-nltk.download('vader_lexicon')
+#nltk.download('subjectivity')
+#nltk.download('vader_lexicon')
 
 ################################################################
 
@@ -68,12 +46,14 @@ def journal_entry(file_name):
 
 
     content = file.readlines()
-    processed_lines = []
+    #print(content)
 
     ps = dict()
     pos = 0
     neu = 0
     neg = 0
+    compound = 0
+
 
     for line in content:
 
@@ -81,12 +61,16 @@ def journal_entry(file_name):
         pos += line_score["pos"]
         neu += line_score["neu"]
         neg += line_score["neg"]
-
+        compound += line_score["compound"]
+        
+        #print(line)
         #print(sia.polarity_scores(line))
 
     ps["pos"] = pos
     ps["neu"] = neu
     ps["neg"] = neg
+    ps["compound"] = compound
+    ps["entry"] = content
 
     dated_scores[todays_date] = ps
     with open('dated_scores.pkl', 'wb') as fp:
@@ -102,6 +86,6 @@ def see_dated_scores():
     if os.path.isfile("dated_scores.pkl"):
         dated_scores_file = open('dated_scores.pkl', 'rb')    
         dated_scores = pickle.load(dated_scores_file)
-        print(dated_scores)
+        #print(dated_scores)
 
 #see_dated_scores()

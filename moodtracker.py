@@ -23,6 +23,8 @@ class Mood(Enum):
 	TENSE = ['tense']
 	UNCOMFORTABLE = ['uncomfortable']
 
+
+
 def log_mood(mood):
 	"""Intended to take a mood (enum) as input
 	   and log it in a tracker.
@@ -48,8 +50,11 @@ def log_mood(mood):
             pickle.dump(mood_tracker, fp)
 
     #Should probably check if it is valid member of mood class?
-
-
+    if isinstance(mood, Enum):
+        continue
+    else:
+        print("error")
+        return
 
     #Check if there is already an entry for the given date
     if string_today in mood_tracker:
@@ -89,3 +94,63 @@ def see_dated_mood():
         mood_tracker_file = open('mood_tracker.pkl', 'rb')    
         mood_tracker = pickle.load(mood_tracker_file)
         print(mood_tracker)
+
+
+
+def playlist_creation(mood):
+    """Initialize an empty playlist for the given mood.
+    """
+    #Should probably check if it is valid member of mood class?
+    if isinstance(mood, Enum):
+        continue
+    else:
+        print("error")
+        return
+    
+    #Check if the pickled dictionary already exists
+    if os.path.isfile("playlists.pkl"):
+        playlists_file = open('playlists.pkl', 'rb')    
+        playlists = pickle.load(playlists_file)
+
+    else:
+
+        playlists = dict()
+        with open('playlists.pkl', 'wb') as fp:
+            pickle.dump(playlists, fp)
+
+    #Check if the mood already exists
+    if mood in playlists:
+        return
+    else:
+        playlists[mood] = []
+        with open('playlists.pkl', 'wb') as fp:
+            pickle.dump(playlists, fp)
+
+
+
+def add_track(track, mood):
+    """Adds a track to the specified mood playlist.
+    """
+
+    #Should probably check if it is valid member of mood class?
+    if isinstance(mood, Enum):
+        continue
+    else:
+        print("error")
+        return
+
+    playlists_file = open('playlists.pkl', 'rb')    
+    playlists = pickle.load(playlists_file)
+
+    #Check if the mood already exists
+    if mood in playlists:
+        continue
+    else:
+        playlists[mood] = []
+
+    playlist = playlists[mood]
+    playlist.append(track)
+    playlists[mood] = playlist
+
+    with open('playlists.pkl', 'wb') as fp:
+        pickle.dump(playlists, fp)

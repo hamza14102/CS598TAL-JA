@@ -35,8 +35,15 @@ def journal_entry(file_name):
     """
 
     file = open(file_name, "r")
+
+    #todays_date represents exact datetime, in case of multiple entries per day
     todays_date = datetime.datetime.now()
-    #print(todays_date)
+    
+
+    #string_today represents the general month day, year
+    #This should make it easier to search for entries by date
+    string_today = todays_date.strftime("%B %d, %Y")
+    
 
     if os.path.isfile("dated_scores.pkl"):
         dated_scores_file = open('dated_scores.pkl', 'rb')    
@@ -50,7 +57,7 @@ def journal_entry(file_name):
 
 
     content = file.readlines()
-    #print(content)
+    
 
     ps = dict()
     pos = 0
@@ -67,27 +74,48 @@ def journal_entry(file_name):
         neg += line_score["neg"]
         compound += line_score["compound"]
         
-        #print(line)
-        #print(sia.polarity_scores(line))
 
     ps["pos"] = pos
     ps["neu"] = neu
     ps["neg"] = neg
     ps["compound"] = compound
     ps["entry"] = content
+    
+    #Check if there is already an entry for the given date
+    if string_today in dated_scores:
 
-    dated_scores[todays_date] = ps
+        #If there is, access the existing dictionary for this day
+        existing_entry = dated_scores[string_today]
+
+        #Add an entry for this day, using specific datetime as key
+        existing_entry[todays_date] = ps
+
+        #Update dated_scores
+        dated_scores[string_today] = existing_entry
+
+    else:
+
+        #Create a new entry dictionary for this general date
+        new_entry = dict()
+
+        #Add an entry for this specific datetime
+        new_entry[todays_date] = ps
+
+        #Update dated scores
+        dated_scores[string_today] = new_entry
+
+    #dated_scores[todays_date] = ps
     with open('dated_scores.pkl', 'wb') as fp:
         pickle.dump(dated_scores, fp)
-        #print("pickled")
+
 
 
 #journal_entry("test.txt")
 
 #def open_journal_entry(date):
-     """Open a journal entry by date
-        and print the content.
-     """
+     #"""Open a journal entry by date
+     #   and print the content.
+     #"""
 def see_dated_scores():
     """Open the pickled dictonary and print
        all the content.

@@ -97,15 +97,9 @@ def see_dated_mood():
 
 
 
-def playlist_creation(mood):
-    """Initialize an empty playlist for the given mood.
+def playlist_creation(playlist_name):
+    """Initialize an empty playlist with the given name.
     """
-    #Should probably check if it is valid member of mood class?
-    if isinstance(mood, Enum):
-        continue
-    else:
-        print("error")
-        return
     
     #Check if the pickled dictionary already exists
     if os.path.isfile("playlists.pkl"):
@@ -119,38 +113,53 @@ def playlist_creation(mood):
             pickle.dump(playlists, fp)
 
     #Check if the mood already exists
-    if mood in playlists:
+    if playlist_name in playlists:
         return
     else:
-        playlists[mood] = []
+        playlists[playlist_name] = []
         with open('playlists.pkl', 'wb') as fp:
             pickle.dump(playlists, fp)
 
 
 
-def add_track(track, mood):
-    """Adds a track to the specified mood playlist.
+def add_track(track, playlist_name):
+    """Adds a track to the specified playlist.
     """
-
-    #Should probably check if it is valid member of mood class?
-    if isinstance(mood, Enum):
-        continue
-    else:
-        print("error")
-        return
 
     playlists_file = open('playlists.pkl', 'rb')    
     playlists = pickle.load(playlists_file)
 
     #Check if the mood already exists
-    if mood in playlists:
+    if playlist_name in playlists:
         continue
     else:
-        playlists[mood] = []
+        playlists[playlist_name] = []
 
-    playlist = playlists[mood]
+    playlist = playlists[playlist_name]
     playlist.append(track)
-    playlists[mood] = playlist
+    playlists[playlist_name] = playlist
 
     with open('playlists.pkl', 'wb') as fp:
         pickle.dump(playlists, fp)
+
+def see_playlists():
+    """See the current saved playlists.
+    """
+
+    playlists_file = open('playlists.pkl', 'rb')    
+    playlists = pickle.load(playlists_file)
+    print(playlists)
+
+def print_tracklist(playlist_name):
+    """See the tracks in a playlist.
+    """
+    playlists_file = open('playlists.pkl', 'rb')    
+    playlists = pickle.load(playlists_file)
+
+    if playlist_name in playlists:
+        print(playlists[playlist_name])
+    else:
+        print("Playlist does not exist.")
+        
+#def remove_track(playlist, track):
+#def remove_playlist(playlist):

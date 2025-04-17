@@ -43,6 +43,7 @@ def journal_entry(file_name):
     #string_today represents the general month day, year
     #This should make it easier to search for entries by date
     string_today = todays_date.strftime("%B %d, %Y")
+    #print(string_today)
     
 
     if os.path.isfile("dated_scores.pkl"):
@@ -112,10 +113,21 @@ def journal_entry(file_name):
 
 #journal_entry("test.txt")
 
-#def open_journal_entry(date):
-     #"""Open a journal entry by date
-     #   and print the content.
-     #"""
+def open_journal_entry(date):
+    """Open a journal entry by date
+        and print the content.
+    """
+
+    dated_scores_file = open('dated_scores.pkl', 'rb')
+    dated_scores = pickle.load(dated_scores_file)
+
+    if date in dated_scores:
+        return(dated_scores[date])
+
+    else:
+        return("No entry")
+       
+
 def see_dated_scores():
     """Open the pickled dictonary and print
        all the content.
@@ -127,3 +139,32 @@ def see_dated_scores():
         print(dated_scores)
 
 #see_dated_scores()
+
+def get_next_ten(current_date):
+    """Fetches 10 entries from the current_index.
+    """
+    #Will assume current_date is in following format
+    #string_today = todays_date.strftime("%B %d, %Y")
+    month, day, year = current_date.split()
+
+    dates_list = []
+
+    #Datetime object - for calculating back days
+    current_date_dt = datetime.datetime.strptime(current_date, '%B %d, %Y')
+
+    for day in range(1, 11):
+        days_prior = current_date_dt - datetime.timedelta(day)
+        day_string = days_prior.strftime("%B %d, %Y")
+        print(day_string)
+        dates_list.append(day_string)
+
+    entry_list = []
+
+    for date in dates_list:
+        entry = open_journal_entry(date)
+        entry_list.append(entry)
+
+    #print(entry_list)
+    return(entry_list)
+
+#get_next_ten("April 17, 2025")
